@@ -1,0 +1,119 @@
+version: "3.5"
+services:
+  nginx:
+    build: nginx
+    ports:
+      - 80:80
+
+  odb-manager:
+    image: publicdataspaces/odb-manager:latest
+    environment:
+      - PIVEAU_HUB_CONFIG={"host":"piveau-hub","port":8080,"apiKey":"yourapikey"}
+      - DB_CONFIG={"host":"postgres","port":5432,"username":"ids","database":"ids","password":"ids"}
+      - VIRTUOSO_CONFIG={"address":"http://virtuoso:8890","dataEndpoint":"/sparql-graph-crud-auth","queryEndpoint":"/sparql","user":"dba","password":"test123456"}
+      - BROKER_CONFIG={"baseUrl":"http://ids.fokus.fraunhofer.de","maintainer":"http://ids.fokus.fraunhofer.de#maintainer","curator":"http://ids.fokus.fraunhofer.de#curator"}
+      - SERVICE_PORT=8080
+    depends_on:
+      - postgres
+      - piveau-hub
+      - virtuoso
+    ports:
+      - 8092:8080
+
+  piveau-ui:
+    image: publicdataspaces/piveau-ui:latest
+    logging:
+      options:
+        max-size: "50m"
+    ports:
+      - 8083:8080
+    environment:
+      - VUE_APP_API_TITLE=Open Data Connector
+      - VUE_APP_API_BASE_URL=http://localhost:8081/
+
+  piveau-hub:
+    image: publicdataspaces/piveau-hub:latest
+    logging:
+      options:
+        max-size: "50m"
+    ports:
+      - 8080:8080
+    environment:
+      - PIVEAU_HUB_SERVICE_PORT=8080
+      - PIVEAU_HUB_BASE_URI=https://ids.fokus.fraunhofer.de/
+      - PIVEAU_HUB_LOAD_VOCABULARIES=true
+      - PIVEAU_HUB_LOAD_VOCABULARIES_FETCH=false
+      - PIVEAU_TRIPLESTORE_CONFIG={"address":"http://piveau_virtuoso:8890", "username":"dba","password":"test123456"}
+      - PIVEAU_HUB_VALIDATOR={"enabled":true}
+      - PIVEAU_HUB_SEARCH_SERVICE={"url":"piveau-search","port":8080,"api_key":"myapikey"}
+      - PIVEAU_TRANSLATION_SERVICE={"enable":false}
+      - PIVEAU_HUB_API_KEY=yourapikey
+      - PIVEAU_HUB_ELASTICSEARCH_ADDRESS=http://elasticsearch:9200
+      - PIVEAU_HUB_SHELL_CONFIG={"http":{},"telnet":{}}
+      - JAVA_OPTS=-Xms12g -Xmx16g
+
+  piveau-search:
+    image: publicdataspaces/piveau-hub-search:latest
+    logging:
+      options:
+        max-size: "50m"
+    ports:
+      - 8081:8080
+      - 8082:8081
+    depends_on:
+      - elasticsearch
+    environment:
+      - VIADUCT_HUB_SEARCH_API_KEY=myapikey
+      - VIADUCT_HUB_SEARCH_ES_CONFIG={"host":"elasticsearch","port":9200}
+      - VIADUCT_HUB_SEARCH_GAZETTEER_CONFIG={"url":"http://doesnotmatter.eu"}
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.0
+    logging:
+      options:
+        max-size: "50m"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  piveau_virtuoso:
+    image: openlink/virtuoso-opensource-7
+    logging:
+      options:
+        max-size: "50m"
+    volumes:
+      - piveau_virtuoso_db:/database
+    environment:
+      - DBA_PASSWORD=test123456
+
+  virtuoso:
+    image: openlink/virtuoso-opensource-7
+    logging:
+      options:
+        max-size: "50m"
+    volumes:
+      - virtuoso_db:/database
+    environment:
+      - DBA_PASSWORD=test123456
+
+  postgres:
+    image: postgres
+    logging:
+      options:
+        max-size: "50m"
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - odb-manager_database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=123456
+      - DATABASE_USER=ids
+      - DATABASE_USER_PW=ids
+
+volumes:
+  odb-manager_database:
+  virtuoso_db:
+  piveau_virtuoso_db:
