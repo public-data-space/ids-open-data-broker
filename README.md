@@ -40,6 +40,14 @@ The -t parameter specifies the wait time between initialisation of important con
 
 The broker can also be started using docker-compose up -d. However due to initialization times of containers, errors may occur. We therefore recommend using the startup script.
 
+##Architecture
+![Broker Architecture](documentation/broker_architecture.png)
+
+The diagram above provides an overview of the components of the Open Data Broker. 
+It consists of a managing component, receiving and orchestrating the IDS Messages, and the Open Data Platform infrastructure based on piveau.
+The IDS Connector Self Description is stored in a virtuoso triplestore to enable querying via SPARQL.
+The piveau-hub receives the IDS metadata as DCAT compliant RDF and provides storage of the information to enable search (piveau-hub-search using elasticsearch) and visualization via the piveau-ui frontend.
+
 ## Usage
 * The broker self description can be accessed at localhost
 * IDS infrastructure messages can be send via HTTP POST to localhost/infrastructure
