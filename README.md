@@ -40,7 +40,7 @@ The -t parameter specifies the wait time between initialisation of important con
 
 The broker can also be started using docker-compose up -d. However due to initialization times of containers, errors may occur. We therefore recommend using the startup script.
 
-##Architecture
+## Architecture
 ![Broker Architecture](documentation/broker_architecture.png)
 
 The diagram above provides an overview of the components of the Open Data Broker. 
