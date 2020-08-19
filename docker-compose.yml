@@ -7,11 +7,14 @@ services:
 
   odb-manager:
     image: publicdataspaces/odb-manager:latest
+    volumes:
+      - ./certs:/ids/certs
     environment:
       - PIVEAU_HUB_CONFIG={"host":"piveau-hub","port":8080,"apiKey":"yourapikey"}
       - DB_CONFIG={"host":"postgres","port":5432,"username":"ids","database":"ids","password":"ids"}
       - VIRTUOSO_CONFIG={"address":"http://virtuoso:8890","dataEndpoint":"/sparql-graph-crud-auth","queryEndpoint":"/sparql","user":"dba","password":"test123456"}
       - BROKER_CONFIG={"baseUrl":"http://ids.fokus.fraunhofer.de","maintainer":"http://ids.fokus.fraunhofer.de#maintainer","curator":"http://ids.fokus.fraunhofer.de#curator"}
+      - AUTH_CONFIG={"keystorename":"keystorename", "keystorepassword":"keystorepassword", "keystorealias":"brokerAlias","truststorename":"truststoreName","dapsurl":"https://daps.aisec.fraunhofer.de/v2/", "dapsissuer":"https://daps.aisec.fraunhofer.de"}
       - SERVICE_PORT=8080
     depends_on:
       - postgres

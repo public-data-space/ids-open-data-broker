@@ -17,10 +17,14 @@ More information and related projects are available at
 * git
 * docker
 * docker-compose 3.5 or higher
+* DAPS Certificates
 
 ## Starting the Broker
 
 ### Using prebuild images (recommended)
+
+To use the broker valid DAPS certificates are necessary. The certificate needs to be placed in a keystore file. Further a truststore containing, the SSL certficate of the DAPS needs to be available.
+Place those files into a folder named `certs` located in the same folder, als the docker-compose.yml. Alternatively adjust the volume path in the docker-compose to point your keystore/truststore folder.
 
 To start the broker manually run:
 
@@ -47,6 +51,8 @@ The diagram above provides an overview of the components of the Open Data Broker
 It consists of a managing component, receiving and orchestrating the IDS Messages, and the Open Data Platform infrastructure based on piveau.
 The IDS Connector Self Description is stored in a virtuoso triplestore to enable querying via SPARQL.
 The piveau-hub receives the IDS metadata as DCAT compliant RDF and provides storage of the information to enable search (piveau-hub-search using elasticsearch) and visualization via the piveau-ui frontend.
+
+
 
 ## Usage
 * The broker self description can be accessed at localhost
