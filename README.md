@@ -23,7 +23,10 @@ More information and related projects are available at
 
 ### Using prebuild images (recommended)
 
-To use the broker valid DAPS certificates are necessary. The certificate needs to be placed in a keystore file. Further a truststore containing, the SSL certficate of the DAPS needs to be available.
+To use the broker, valid DAPS certificates are necessary. The certificate needs to be placed in a keystore file. Further a truststore containing the SSL certficate of the DAPS needs to be available. 
+
+Members of the IDSA can request demo certificates for the DAPS implementation of Fraunhofer AISEC at https://industrialdataspace.jiveon.com/docs/DOC-2002 
+
 Place those files into a folder named `certs` located in the same folder, als the docker-compose.yml. Alternatively adjust the volume path in the docker-compose to point your keystore/truststore folder.
 
 To start the broker manually run:
